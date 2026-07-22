@@ -1,0 +1,15 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+*.local.*
+credentials*
+auth*
+sessions/
+projects/
+cache/
+downloads/
+file-history/
+logs/
+runtime/
+settings.local.json

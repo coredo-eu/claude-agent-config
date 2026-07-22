@@ -1,0 +1,78 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__codeindexer__search_code",
+      "mcp__codeindexer__find_callers",
+      "mcp__codeindexer__find_callees",
+      "mcp__codeindexer__find_references",
+      "mcp__codeindexer__find_related",
+      "mcp__codeindexer__find_call_chain",
+      "mcp__codeindexer__find_by_signature",
+      "mcp__codeindexer__find_test_coverage",
+      "mcp__codeindexer__find_dead_code",
+      "mcp__codeindexer__find_complex_functions",
+      "mcp__codeindexer__find_execution_flows",
+      "mcp__codeindexer__file_deps",
+      "mcp__codeindexer__read_chunk",
+      "mcp__codeindexer__read_file_range",
+      "mcp__codeindexer__briefing",
+      "mcp__codeindexer__history"
+    ],
+    "ask": [
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(gh pr create *)",
+      "Bash(gh pr merge *)",
+      "Bash(docker restart *)",
+      "Bash(docker stop *)",
+      "Bash(docker compose up *)",
+      "Bash(docker compose down *)",
+      "Bash(launchctl bootstrap *)",
+      "Bash(launchctl bootout *)",
+      "Bash(launchctl enable *)",
+      "Bash(launchctl disable *)",
+      "Bash(launchctl kickstart *)",
+      "Bash(launchctl remove *)",
+      "Bash(sudo *)",
+      "Bash(kill *)",
+      "Bash(rm -rf *)"
+    ],
+    "deny": [
+      "Read(__HOME__/**/.claude/settings.local.json)",
+      "Read(__HOME__/.claude/projects/**)",
+      "Bash(*settings.local.json*)",
+      "Bash(*.claude/projects/*)",
+      "Bash(export CF_TOKEN=*)",
+      "Bash(export CF_ACCOUNT=*)",
+      "Bash(*Authorization: Bearer *)"
+    ],
+    "defaultMode": "auto",
+    "disableBypassPermissionsMode": "disable"
+  },
+  "autoMode": {
+    "classifyAllShell": true
+  },
+  "model": "opus[1m]",
+  "fallbackModel": [
+    "claude-opus-4-8[1m]",
+    "claude-sonnet-5"
+  ],
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.claude/hooks/codeindexer-session-facts.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "effortLevel": "xhigh",
+  "tui": "fullscreen",
+  "skipWorkflowUsageWarning": true,
+  "theme": "dark",
+  "skipAutoPermissionPrompt": true
+}
