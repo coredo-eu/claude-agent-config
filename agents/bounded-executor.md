@@ -2,6 +2,7 @@
 name: bounded-executor
 description: Implements one coherent local outcome after the parent supplies observable done criteria, authority boundaries, authoritative context and non-goals. Use only when the edit scope is isolated from other writers.
 model: sonnet
+effort: high
 tools: Bash, Read, Write, Edit, Glob, Grep, mcp__codeindexer__search_code, mcp__codeindexer__find_callers, mcp__codeindexer__find_callees, mcp__codeindexer__find_references, mcp__codeindexer__file_deps, mcp__codeindexer__read_chunk, mcp__codeindexer__read_file_range
 ---
 

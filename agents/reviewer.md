@@ -2,6 +2,7 @@
 name: reviewer
 description: Independent read-only adversarial review of a proposed or implemented change for correctness, invariants, regressions, concurrency, data consistency, public contracts and missing tests. Use when a separate falsifying pass improves confidence.
 model: opus
+effort: high
 tools: Read, Glob, Grep, mcp__codeindexer__search_code, mcp__codeindexer__find_callers, mcp__codeindexer__find_callees, mcp__codeindexer__find_references, mcp__codeindexer__file_deps, mcp__codeindexer__read_chunk, mcp__codeindexer__read_file_range
 ---
 

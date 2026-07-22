@@ -26,7 +26,7 @@ Standalone Claude — самостоятельный principal: главная �
 - `reviewer` — adversarial review correctness, invariants, regressions и test gaps.
 - `security-reviewer` — read-only security, credentials, privacy, AML, sanctions, authorization и destructive-risk review.
 
-Главная сессия наследует model и effort, выбранные пользователем. Специализированные agents используют явные model routes: Haiku для discovery, наблюдения и тестовых прогонов; Sonnet для bounded implementation; Opus для correctness и security review. Выбирай роль по сложности и риску задания, а не запускай дорогую модель автоматически для любой делегации.
+Главная сессия наследует model и effort, выбранные пользователем. Специализированные agents используют явные model routes: Haiku для discovery, наблюдения и тестовых прогонов; Sonnet для bounded implementation; Opus для correctness и security review. Bounded executor и correctness reviewer работают с `high` effort, security reviewer — с `xhigh`; Haiku 4.5 не поддерживает настраиваемый effort, поэтому его роли используют поведение модели без фиктивного override. Выбирай роль по сложности и риску задания, а не запускай дорогую модель автоматически для любой делегации.
 <!-- multi-model-agents:end -->
 
 <!-- codeindexer:begin -->

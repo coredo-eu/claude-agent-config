@@ -41,14 +41,14 @@ The complete policy is in [`CLAUDE.md`](CLAUDE.md).
 
 ## Agent roles
 
-| Role | Model | Access | Intended use |
-| --- | --- | --- | --- |
-| `bounded-executor` | Sonnet | local read/write | One coherent implementation inside an explicitly owned worktree. |
-| `codeindexer-explorer` | Haiku | read-only | Semantic discovery, call/dependency reconstruction, and impact evidence. |
-| `scout` | Haiku | read-only observation | Current local runtime, logs, health, queue, and service-state evidence. |
-| `test-runner` | Haiku | verification outputs only | Tests, builds, linters, and smoke checks after edit custody returns. |
-| `reviewer` | Opus | read-only | Independent adversarial correctness and regression review. |
-| `security-reviewer` | Opus | read-only | Security, privacy, credential, and authorization review. |
+| Role | Model | Effort | Access | Intended use |
+| --- | --- | --- | --- | --- |
+| `bounded-executor` | Sonnet | `high` | local read/write | One coherent implementation inside an explicitly owned worktree. |
+| `codeindexer-explorer` | Haiku | not supported by Haiku | read-only | Semantic discovery, call/dependency reconstruction, and impact evidence. |
+| `scout` | Haiku | not supported by Haiku | read-only observation | Current local runtime, logs, health, queue, and service-state evidence. |
+| `test-runner` | Haiku | not supported by Haiku | verification outputs only | Tests, builds, linters, and smoke checks after edit custody returns. |
+| `reviewer` | Opus | `high` | read-only | Independent adversarial correctness and regression review. |
+| `security-reviewer` | Opus | `xhigh` | read-only | Security, privacy, credential, and authorization review. |
 
 Each agent receives an outcome and boundaries, chooses its own method, and
 returns concise evidence to the main session. Agent definitions never grant
@@ -63,8 +63,9 @@ external-action authority.
 - specialized agents override that inheritance intentionally: Haiku handles
   discovery and routine verification, Sonnet handles implementation, and Opus
   handles independent correctness and security review;
-- Claude agent frontmatter supports per-role model routing but no per-agent
-  effort field, so this repository stores no agent effort override;
+- supported agents also set role-specific effort: `high` for bounded execution
+  and correctness review, and `xhigh` for security review. Haiku 4.5 does not
+  support configurable effort, so its three inexpensive roles omit the field;
 - no `defaultMode`, `autoMode`, or `skipAutoPermissionPrompt`: automatic mode
   remains under the user's local Claude settings;
 - permission bypass disabled as a shared safety boundary;
