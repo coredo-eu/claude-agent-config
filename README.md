@@ -36,7 +36,7 @@ The complete policy is in [`CLAUDE.md`](CLAUDE.md).
 | --- | --- |
 | [`CLAUDE.md`](CLAUDE.md) | Global delegation, ownership, evidence, and tracking policy. |
 | [`agents/`](agents) | Six standalone Claude agent definitions. |
-| [`settings.example.json`](settings.example.json) | Sanitized model, permission, UI, and hook configuration. |
+| [`settings.example.json`](settings.example.json) | Sanitized permission, UI, effort, and hook configuration. |
 | [`hooks/codeindexer-session-facts.sh`](hooks/codeindexer-session-facts.sh) | Active read-only SessionStart hook for CodeIndexer readiness context. |
 
 ## Agent roles
@@ -58,8 +58,9 @@ external-action authority.
 
 [`settings.example.json`](settings.example.json) records these current choices:
 
-- primary model `opus[1m]` with `xhigh` effort;
-- fallbacks `claude-opus-4-8[1m]` and `claude-sonnet-5`;
+- no top-level `model` or `fallbackModel` override: the main session and its
+  agents inherit the model selected by the user;
+- `xhigh` effort for the inherited model;
 - automatic shell classification with permission bypass disabled;
 - allowlisted read-only CodeIndexer MCP discovery tools;
 - explicit confirmation for commit, push, PR mutation, container/service
@@ -69,8 +70,8 @@ external-action authority.
 - fullscreen dark TUI;
 - one active SessionStart hook.
 
-Model identifiers and settings fields follow the source Claude installation and
-may require adjustment for another release channel.
+Settings fields follow the source Claude installation and may require adjustment
+for another release channel.
 
 ## CodeIndexer SessionStart hook
 

@@ -52,11 +52,6 @@
   "autoMode": {
     "classifyAllShell": true
   },
-  "model": "opus[1m]",
-  "fallbackModel": [
-    "claude-opus-4-8[1m]",
-    "claude-sonnet-5"
-  ],
   "hooks": {
     "SessionStart": [
       {
