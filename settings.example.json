@@ -46,11 +46,7 @@
       "Bash(export CF_ACCOUNT=*)",
       "Bash(*Authorization: Bearer *)"
     ],
-    "defaultMode": "auto",
     "disableBypassPermissionsMode": "disable"
-  },
-  "autoMode": {
-    "classifyAllShell": true
   },
   "hooks": {
     "SessionStart": [
@@ -68,6 +64,5 @@
   "effortLevel": "xhigh",
   "tui": "fullscreen",
   "skipWorkflowUsageWarning": true,
-  "theme": "dark",
-  "skipAutoPermissionPrompt": true
+  "theme": "dark"
 }

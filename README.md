@@ -36,19 +36,19 @@ The complete policy is in [`CLAUDE.md`](CLAUDE.md).
 | --- | --- |
 | [`CLAUDE.md`](CLAUDE.md) | Global delegation, ownership, evidence, and tracking policy. |
 | [`agents/`](agents) | Six standalone Claude agent definitions. |
-| [`settings.example.json`](settings.example.json) | Sanitized permission, UI, effort, and hook configuration. |
+| [`settings.example.json`](settings.example.json) | Sanitized permission, effort, UI, and hook configuration. |
 | [`hooks/codeindexer-session-facts.sh`](hooks/codeindexer-session-facts.sh) | Active read-only SessionStart hook for CodeIndexer readiness context. |
 
 ## Agent roles
 
-| Role | Access | Intended use |
-| --- | --- | --- |
-| `bounded-executor` | local read/write | One coherent implementation inside an explicitly owned worktree. |
-| `codeindexer-explorer` | read-only | Semantic discovery, call/dependency reconstruction, and impact evidence. |
-| `scout` | read-only observation | Current local runtime, logs, health, queue, and service-state evidence. |
-| `test-runner` | verification outputs only | Tests, builds, linters, and smoke checks after edit custody returns. |
-| `reviewer` | read-only | Independent adversarial correctness and regression review. |
-| `security-reviewer` | read-only | Security, privacy, credential, and authorization review. |
+| Role | Model | Access | Intended use |
+| --- | --- | --- | --- |
+| `bounded-executor` | Sonnet | local read/write | One coherent implementation inside an explicitly owned worktree. |
+| `codeindexer-explorer` | Haiku | read-only | Semantic discovery, call/dependency reconstruction, and impact evidence. |
+| `scout` | Haiku | read-only observation | Current local runtime, logs, health, queue, and service-state evidence. |
+| `test-runner` | Haiku | verification outputs only | Tests, builds, linters, and smoke checks after edit custody returns. |
+| `reviewer` | Opus | read-only | Independent adversarial correctness and regression review. |
+| `security-reviewer` | Opus | read-only | Security, privacy, credential, and authorization review. |
 
 Each agent receives an outcome and boundaries, chooses its own method, and
 returns concise evidence to the main session. Agent definitions never grant
@@ -58,20 +58,25 @@ external-action authority.
 
 [`settings.example.json`](settings.example.json) records these current choices:
 
-- no top-level `model` or `fallbackModel` override: the main session and its
-  agents inherit the model selected by the user;
-- `xhigh` effort for the inherited model;
-- automatic shell classification with permission bypass disabled;
+- no top-level `model` or `fallbackModel` override: the main session inherits
+  the model selected by the user;
+- specialized agents override that inheritance intentionally: Haiku handles
+  discovery and routine verification, Sonnet handles implementation, and Opus
+  handles independent correctness and security review;
+- `xhigh` effort for the inherited main model;
+- no `defaultMode`, `autoMode`, or `skipAutoPermissionPrompt`: automatic mode
+  remains under the user's local Claude settings;
+- permission bypass disabled as a shared safety boundary;
 - allowlisted read-only CodeIndexer MCP discovery tools;
 - explicit confirmation for commit, push, PR mutation, container/service
   control, `sudo`, process termination, and recursive deletion;
 - denial rules protecting local settings, Claude project histories, and common
   credential-export patterns;
-- fullscreen dark TUI;
+- fullscreen dark TUI with the workflow usage warning suppressed;
 - one active SessionStart hook.
 
-Settings fields follow the source Claude installation and may require adjustment
-for another release channel.
+The remaining settings fields may require adjustment for another Claude release
+channel.
 
 ## CodeIndexer SessionStart hook
 

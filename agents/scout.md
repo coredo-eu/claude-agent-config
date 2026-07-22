@@ -1,6 +1,7 @@
 ---
 name: scout
 description: Read-only observation of a bounded local runtime or operational-state question when isolated evidence would help the parent decide.
+model: haiku
 tools: Bash, Read, Glob, Grep, mcp__codeindexer__search_code, mcp__codeindexer__read_file_range
 ---
 
