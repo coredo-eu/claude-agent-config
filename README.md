@@ -36,7 +36,7 @@ The complete policy is in [`CLAUDE.md`](CLAUDE.md).
 | --- | --- |
 | [`CLAUDE.md`](CLAUDE.md) | Global delegation, ownership, evidence, and tracking policy. |
 | [`agents/`](agents) | Six standalone Claude agent definitions. |
-| [`settings.example.json`](settings.example.json) | Sanitized permission, effort, UI, and hook configuration. |
+| [`settings.example.json`](settings.example.json) | Sanitized permission, UI, and hook configuration. |
 | [`hooks/codeindexer-session-facts.sh`](hooks/codeindexer-session-facts.sh) | Active read-only SessionStart hook for CodeIndexer readiness context. |
 
 ## Agent roles
@@ -58,12 +58,13 @@ external-action authority.
 
 [`settings.example.json`](settings.example.json) records these current choices:
 
-- no top-level `model` or `fallbackModel` override: the main session inherits
-  the model selected by the user;
+- no top-level `model`, `fallbackModel`, or `effortLevel` override: the main
+  session inherits the model and effort selected by the user;
 - specialized agents override that inheritance intentionally: Haiku handles
   discovery and routine verification, Sonnet handles implementation, and Opus
   handles independent correctness and security review;
-- `xhigh` effort for the inherited main model;
+- Claude agent frontmatter supports per-role model routing but no per-agent
+  effort field, so this repository stores no agent effort override;
 - no `defaultMode`, `autoMode`, or `skipAutoPermissionPrompt`: automatic mode
   remains under the user's local Claude settings;
 - permission bypass disabled as a shared safety boundary;
