@@ -43,12 +43,12 @@ The complete policy is in [`CLAUDE.md`](CLAUDE.md).
 
 | Role | Model | Effort | Access | Intended use |
 | --- | --- | --- | --- | --- |
-| `bounded-executor` | Sonnet | `high` | local read/write | One coherent implementation inside an explicitly owned worktree. |
-| `codeindexer-explorer` | Haiku | not supported by Haiku | read-only | Semantic discovery, call/dependency reconstruction, and impact evidence. |
-| `scout` | Haiku | not supported by Haiku | read-only observation | Current local runtime, logs, health, queue, and service-state evidence. |
-| `test-runner` | Haiku | not supported by Haiku | verification outputs only | Tests, builds, linters, and smoke checks after edit custody returns. |
-| `reviewer` | Opus | `high` | read-only | Independent adversarial correctness and regression review. |
-| `security-reviewer` | Opus | `xhigh` | read-only | Security, privacy, credential, and authorization review. |
+| `bounded-executor` | `claude-sonnet-5` | `high` | local read/write | One coherent implementation inside an explicitly owned worktree. |
+| `codeindexer-explorer` | `claude-haiku-4-5-20251001` | not supported by Haiku | read-only | Semantic discovery, call/dependency reconstruction, and impact evidence. |
+| `scout` | `claude-haiku-4-5-20251001` | not supported by Haiku | read-only observation | Current local runtime, logs, health, queue, and service-state evidence. |
+| `test-runner` | `claude-haiku-4-5-20251001` | not supported by Haiku | verification outputs only | Tests, builds, linters, and smoke checks after edit custody returns. |
+| `reviewer` | `claude-opus-5` | `medium` | read-only | Independent adversarial correctness and regression review. |
+| `security-reviewer` | `claude-opus-5` | `xhigh` | read-only | Security, privacy, credential, and authorization review. |
 
 Each agent receives an outcome and boundaries, chooses its own method, and
 returns concise evidence to the main session. Agent definitions never grant
@@ -60,12 +60,14 @@ external-action authority.
 
 - no top-level `model`, `fallbackModel`, or `effortLevel` override: the main
   session inherits the model and effort selected by the user;
-- specialized agents override that inheritance intentionally: Haiku handles
-  discovery and routine verification, Sonnet handles implementation, and Opus
-  handles independent correctness and security review;
-- supported agents also set role-specific effort: `high` for bounded execution
-  and correctness review, and `xhigh` for security review. Haiku 4.5 does not
-  support configurable effort, so its three inexpensive roles omit the field;
+- specialized agents override that inheritance intentionally with exact model
+  IDs: Haiku 4.5 handles discovery and routine verification, Sonnet 5 handles
+  implementation, and Opus 5 handles independent correctness and security
+  review;
+- supported agents also set role-specific effort: `high` for bounded execution,
+  `medium` for correctness review, and `xhigh` for security review. Haiku 4.5
+  does not support configurable effort, so its three inexpensive roles omit the
+  field;
 - no `defaultMode`, `autoMode`, or `skipAutoPermissionPrompt`: automatic mode
   remains under the user's local Claude settings;
 - permission bypass disabled as a shared safety boundary;
