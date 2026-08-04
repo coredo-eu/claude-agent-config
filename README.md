@@ -14,8 +14,9 @@ does not contain Claude authentication, conversations, or runtime state.
 ## Operating model
 
 - Standalone Claude is its own principal. Its main session owns the requested
-  outcome, architectural decisions, integration, conflict resolution, and final
-  verification.
+  outer goal, architectural decisions, integration, conflict resolution, and
+  the final completion verdict. A delegated agent owns one bounded stage; its
+  handoff is evidence, never completion of the outer goal.
 - Agents are optional bounded workers, not an obligatory pipeline. Delegation
   is used when context isolation, parallel discovery, or independent review
   materially improves the result.
@@ -38,6 +39,7 @@ The complete policy is in [`CLAUDE.md`](CLAUDE.md).
 | [`agents/`](agents) | Six standalone Claude agent definitions. |
 | [`settings.example.json`](settings.example.json) | Sanitized permission, UI, and hook configuration. |
 | [`hooks/codeindexer-session-facts.sh`](hooks/codeindexer-session-facts.sh) | Active read-only SessionStart hook for CodeIndexer readiness context. |
+| [`scripts/validate.py`](scripts/validate.py) | Deterministic goal-contract, model-route, and settings validation. |
 
 ## Agent roles
 
@@ -50,9 +52,14 @@ The complete policy is in [`CLAUDE.md`](CLAUDE.md).
 | `reviewer` | `claude-opus-5` | `medium` | read-only | Independent adversarial correctness and regression review. |
 | `security-reviewer` | `claude-opus-5` | `xhigh` | read-only | Security, privacy, credential, and authorization review. |
 
-Each agent receives an outcome and boundaries, chooses its own method, and
-returns concise evidence to the main session. Agent definitions never grant
-external-action authority.
+Each agent receives the bounded seven-field goal contract, chooses its own
+method, and returns concise evidence to the main session. Agent definitions
+never grant external-action authority.
+
+Every independently owned delegation preserves these exact headings in order:
+`Outcome`, `Done when`, `Boundaries`, `Authoritative context`, `Non-goals`,
+`Known evidence`, and `Required handoff`. Values may stay compact for a small
+read-only question, but routing metadata never replaces the goal contract.
 
 ## Settings snapshot
 
@@ -115,6 +122,7 @@ Requirements:
 
 - Claude Code with support for `CLAUDE.md`, custom agents, hooks, and permission
   rules;
+- Python 3 for repository validation;
 - `jq` and `curl` for the CodeIndexer hook;
 - CodeIndexer only when hook context or MCP discovery is wanted.
 
@@ -140,10 +148,12 @@ local permissions, hooks, or plugin settings wholesale.
 jq empty settings.example.json
 bash -n hooks/codeindexer-session-facts.sh
 printf '{"cwd":"/tmp"}' | hooks/codeindexer-session-facts.sh
+python3 scripts/validate.py
 ```
 
-The final command should exit successfully and produce no output when no
-matching registry entry exists.
+The hook smoke command should exit successfully and produce no output when no
+matching registry entry exists. The contract validator prints
+`claude-agent-config validation: PASS` on success.
 
 ## Deliberate exclusions
 
@@ -151,3 +161,8 @@ This repository does not contain credentials, licenses, local overrides,
 conversation or project histories, sessions, caches, downloads, file history,
 plugin caches, marketplace state, or absolute machine paths. Those remain owned
 by each local standalone Claude installation.
+
+It also does not define shared PTY-worker admission or a HOME-wide busy-worker
+limit. Those are Codex-orchestrator transport controls; copying them into this
+standalone configuration would neither coordinate Codex threads nor preserve
+their session ownership boundary.
