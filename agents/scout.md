@@ -1,6 +1,6 @@
 ---
 name: scout
-description: Read-only observation of a bounded local runtime or operational-state question when isolated evidence would help the parent decide.
+description: Proactively use for read-only observation of a bounded local runtime or operational-state question when isolated evidence would help the parent decide.
 model: claude-haiku-4-5-20251001
 tools: Bash, Read, Glob, Grep, mcp__codeindexer__search_code, mcp__codeindexer__read_file_range
 ---

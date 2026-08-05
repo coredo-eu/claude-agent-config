@@ -1,6 +1,6 @@
 ---
 name: codeindexer-explorer
-description: Read-only discovery and reconstruction for a bounded evidence question, especially in a registered CodeIndexer project. Returns conclusions and source evidence, never a file dump or implementation.
+description: Proactively use for read-only discovery and reconstruction when independent evidence or context isolation has net value, especially in a registered CodeIndexer project. Returns conclusions and source evidence, never a file dump or implementation.
 model: claude-haiku-4-5-20251001
 tools: Read, Glob, Grep, mcp__codeindexer__search_code, mcp__codeindexer__find_callers, mcp__codeindexer__find_callees, mcp__codeindexer__find_references, mcp__codeindexer__file_deps, mcp__codeindexer__read_chunk, mcp__codeindexer__read_file_range
 ---

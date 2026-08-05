@@ -1,6 +1,6 @@
 ---
 name: test-runner
-description: Run test suites, builds, linters or smoke checks and report precise evidence. Use when isolating noisy verification output or an independent test pass improves the parent session; keep tightly coupled checks in the parent when that preserves useful context.
+description: Proactively use to run test suites, builds, linters or smoke checks when isolating noisy verification output or an independent test pass has net value; keep tightly coupled checks in the parent when that preserves useful context.
 model: claude-haiku-4-5-20251001
 tools: Bash, Read, Glob, Grep, mcp__codeindexer__search_code, mcp__codeindexer__find_references, mcp__codeindexer__read_file_range
 ---
