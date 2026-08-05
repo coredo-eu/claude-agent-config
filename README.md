@@ -11,6 +11,17 @@ setup. It captures the main-session policy, six specialized agent definitions,
 guarded permission choices, and a read-only CodeIndexer SessionStart hook. It
 does not contain Claude authentication, conversations, or runtime state.
 
+## Current release
+
+`v0.2.0` is the first explicitly versioned standalone-Claude release. It adds
+proactive, outcome-selected agent routing while preserving the exact
+seven-field goal contract, single-writer custody, main-session completion
+authority, and the established role-specific model and effort routes.
+
+This version is independent of the Codex Claude Orchestrator release line.
+Codex PTY admission, busy-worker limits, and worker-stage guards remain in the
+orchestrator rather than being copied into standalone Claude configuration.
+
 ## Operating model
 
 - Standalone Claude is its own principal. Its main session owns the requested
@@ -35,6 +46,7 @@ The complete policy is in [`CLAUDE.md`](CLAUDE.md).
 
 | Path | Purpose |
 | --- | --- |
+| [`VERSION`](VERSION) | Standalone package version used for Git tags and releases. |
 | [`CLAUDE.md`](CLAUDE.md) | Global delegation, ownership, evidence, and tracking policy. |
 | [`agents/`](agents) | Six standalone Claude agent definitions. |
 | [`settings.example.json`](settings.example.json) | Sanitized permission, UI, and hook configuration. |

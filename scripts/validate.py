@@ -26,6 +26,7 @@ ROUTES: dict[str, tuple[str, str | None]] = {
     "reviewer.md": ("claude-opus-5", "medium"),
     "security-reviewer.md": ("claude-opus-5", "xhigh"),
 }
+SEMVER = re.compile(r"(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)")
 REVIEW_TOOLS = (
     "Read",
     "Glob",
@@ -129,6 +130,9 @@ def validate_agent(path: Path, model: str, effort: str | None) -> None:
 
 
 def main() -> int:
+    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    require(SEMVER.fullmatch(version) is not None, "VERSION is not plain semantic versioning")
+
     claude_text = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
     policy_headings = re.findall(
         r"^- `(Outcome|Done when|Boundaries|Authoritative context|Non-goals|Known evidence|Required handoff)`",
@@ -151,6 +155,7 @@ def main() -> int:
     require(all(position >= 0 for position in positions), "README goal contract incomplete")
     require(positions == sorted(positions), "README goal headings out of order")
     require("busy-worker" in readme and "Codex-orchestrator" in readme, "transport boundary missing")
+    require(f"`v{version}`" in readme, "README release version drift")
 
     settings = json.loads((ROOT / "settings.example.json").read_text(encoding="utf-8"))
     for forbidden in ("model", "fallbackModel", "effortLevel"):
