@@ -7,16 +7,17 @@
 - [Claude agent configuration](https://github.com/coredo-eu/claude-agent-config) — portable standalone Claude guidance, agents, permissions, and CodeIndexer hook.
 
 This repository is a portable, public snapshot of a standalone Claude agent
-setup. It captures the main-session policy, six specialized agent definitions,
+setup. It captures the main-session policy, seven specialized agent definitions,
 guarded permission choices, and a read-only CodeIndexer SessionStart hook. It
 does not contain Claude authentication, conversations, or runtime state.
 
 ## Current release
 
-`v0.2.0` is the first explicitly versioned standalone-Claude release. It adds
-proactive, outcome-selected agent routing while preserving the exact
-seven-field goal contract, single-writer custody, main-session completion
-authority, and the established role-specific model and effort routes.
+`v0.3.0` aligns standalone Claude with the canonical seven-role semantic
+taxonomy. It separates direct source inspection from CodeIndexer-based semantic
+discovery while preserving the exact seven-field goal contract, single-writer
+custody, main-session completion authority, and the established role-specific
+model and effort routes.
 
 This version is independent of the Codex Claude Orchestrator release line.
 Codex PTY admission, busy-worker limits, and worker-stage guards remain in the
@@ -48,7 +49,7 @@ The complete policy is in [`CLAUDE.md`](CLAUDE.md).
 | --- | --- |
 | [`VERSION`](VERSION) | Standalone package version used for Git tags and releases. |
 | [`CLAUDE.md`](CLAUDE.md) | Global delegation, ownership, evidence, and tracking policy. |
-| [`agents/`](agents) | Six standalone Claude agent definitions. |
+| [`agents/`](agents) | Seven standalone Claude agent definitions. |
 | [`settings.example.json`](settings.example.json) | Sanitized permission, UI, and hook configuration. |
 | [`hooks/codeindexer-session-facts.sh`](hooks/codeindexer-session-facts.sh) | Active read-only SessionStart hook for CodeIndexer readiness context. |
 | [`scripts/validate.py`](scripts/validate.py) | Deterministic goal-contract, model-route, and settings validation. |
@@ -58,11 +59,25 @@ The complete policy is in [`CLAUDE.md`](CLAUDE.md).
 | Role | Model | Effort | Access | Intended use |
 | --- | --- | --- | --- | --- |
 | `bounded-executor` | `claude-sonnet-5` | `high` | local read/write | One coherent implementation inside an explicitly owned worktree. |
+| `source-explorer` | `claude-haiku-4-5-20251001` | not supported by Haiku | read-only | Direct inspection of current source, configuration, schemas, and tests. |
 | `codeindexer-explorer` | `claude-haiku-4-5-20251001` | not supported by Haiku | read-only | Semantic discovery, call/dependency reconstruction, and impact evidence. |
 | `scout` | `claude-haiku-4-5-20251001` | not supported by Haiku | read-only observation | Current local runtime, logs, health, queue, and service-state evidence. |
 | `test-runner` | `claude-haiku-4-5-20251001` | not supported by Haiku | verification outputs only | Tests, builds, linters, and smoke checks after edit custody returns. |
 | `reviewer` | `claude-opus-5` | `medium` | read-only | Independent adversarial correctness and regression review. |
 | `security-reviewer` | `claude-opus-5` | `xhigh` | read-only | Security, privacy, credential, and authorization review. |
+
+The canonical semantic taxonomy maps to these standalone Claude names as
+follows:
+
+| Canonical semantic role | Standalone Claude agent | Selection boundary |
+| --- | --- | --- |
+| Direct-source exploration | `source-explorer` | Inspect current local source when direct evidence is sufficient. |
+| CodeIndexer exploration | `codeindexer-explorer` | Use semantic search and reconstruction when indexed evidence adds value. |
+| Local operational scouting | `scout` | Observe a bounded current runtime or operational-state question. |
+| Bounded implementation | `bounded-executor` | Make one coherent change only with isolated edit custody. |
+| Independent verification | `test-runner` | Run relevant checks after edit custody returns or in an isolated root. |
+| Correctness review | `reviewer` | Falsify a result when consequence or uncertainty warrants it. |
+| Security review | `security-reviewer` | Review materially implicated security or privacy concerns. |
 
 Each agent receives the bounded seven-field goal contract, chooses its own
 method, and returns concise evidence to the main session. Agent definitions
@@ -80,13 +95,13 @@ read-only question, but routing metadata never replaces the goal contract.
 - no top-level `model`, `fallbackModel`, or `effortLevel` override: the main
   session inherits the model and effort selected by the user;
 - specialized agents override that inheritance intentionally with exact model
-  IDs: Haiku 4.5 handles discovery and routine verification, Sonnet 5 handles
+  IDs: Haiku 4.5 handles direct/semantic discovery and routine verification, Sonnet 5 handles
   implementation, and Opus 5 handles independent correctness and security
   review;
 - supported agents also set role-specific effort: `high` for bounded execution,
   `medium` for correctness review, and `xhigh` for security review. Haiku 4.5
-  does not support configurable effort, so its three inexpensive roles omit the
-  field;
+  does not support configurable effort, so its four inexpensive roles omit the
+  field; these defaults remain unchanged in `v0.3.0` pending a measured A/B evaluation;
 - no `defaultMode`, `autoMode`, or `skipAutoPermissionPrompt`: automatic mode
   remains under the user's local Claude settings;
 - permission bypass disabled as a shared safety boundary;

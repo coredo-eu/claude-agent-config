@@ -9,6 +9,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
+RELEASE_VERSION = "0.3.0"
 HEADINGS = [
     "Outcome",
     "Done when",
@@ -20,6 +21,7 @@ HEADINGS = [
 ]
 ROUTES: dict[str, tuple[str, str | None]] = {
     "bounded-executor.md": ("claude-sonnet-5", "high"),
+    "source-explorer.md": ("claude-haiku-4-5-20251001", None),
     "codeindexer-explorer.md": ("claude-haiku-4-5-20251001", None),
     "scout.md": ("claude-haiku-4-5-20251001", None),
     "test-runner.md": ("claude-haiku-4-5-20251001", None),
@@ -67,6 +69,7 @@ TOOLS: dict[str, tuple[str, ...]] = {
         "mcp__codeindexer__read_chunk",
         "mcp__codeindexer__read_file_range",
     ),
+    "source-explorer.md": ("Read", "Glob", "Grep"),
     "scout.md": (
         "Bash",
         "Read",
@@ -129,9 +132,30 @@ def validate_agent(path: Path, model: str, effort: str | None) -> None:
     require(observed_tools == TOOLS[path.name], f"tool route drift: {path.relative_to(ROOT)}")
 
 
+def validate_role_descriptions() -> None:
+    descriptions = {
+        path.name: frontmatter(path.read_text(encoding="utf-8"), path).get("description", "")
+        for path in (ROOT / "agents").glob("*.md")
+    }
+    require(
+        "CodeIndexer" not in descriptions["source-explorer.md"],
+        "source explorer must remain direct-source only",
+    )
+    require(
+        "CodeIndexer" in descriptions["codeindexer-explorer.md"],
+        "CodeIndexer explorer must retain semantic-index selection",
+    )
+    for filename in ("bounded-executor.md", "reviewer.md", "security-reviewer.md"):
+        require(
+            "Proactively use" not in descriptions[filename],
+            f"expensive or write role has blanket proactive bias: agents/{filename}",
+        )
+
+
 def main() -> int:
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     require(SEMVER.fullmatch(version) is not None, "VERSION is not plain semantic versioning")
+    require(version == RELEASE_VERSION, f"VERSION must be {RELEASE_VERSION}")
 
     claude_text = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
     policy_headings = re.findall(
@@ -149,6 +173,7 @@ def main() -> int:
     require(observed_agents == expected_agents, "agent inventory drift")
     for filename, (model, effort) in ROUTES.items():
         validate_agent(ROOT / "agents" / filename, model, effort)
+    validate_role_descriptions()
 
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     positions = [readme.find(f"`{heading}`") for heading in HEADINGS]
@@ -156,6 +181,9 @@ def main() -> int:
     require(positions == sorted(positions), "README goal headings out of order")
     require("busy-worker" in readme and "Codex-orchestrator" in readme, "transport boundary missing")
     require(f"`v{version}`" in readme, "README release version drift")
+    require("Canonical semantic role" in readme, "README canonical role mapping missing")
+    for agent in ("source-explorer", "codeindexer-explorer", "scout", "bounded-executor", "test-runner", "reviewer", "security-reviewer"):
+        require(f"`{agent}`" in readme, f"README role mapping missing: {agent}")
 
     settings = json.loads((ROOT / "settings.example.json").read_text(encoding="utf-8"))
     for forbidden in ("model", "fallbackModel", "effortLevel"):

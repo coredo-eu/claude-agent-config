@@ -21,7 +21,8 @@ Standalone Claude — самостоятельный principal: главная �
 
 Роли — маршруты, а не обязательный конвейер:
 
-- `codeindexer-explorer` — read-only discovery и reconstruction с компактным evidence pack.
+- `source-explorer` — direct read-only source inspection для ограниченного вопроса, когда semantic index не нужен.
+- `codeindexer-explorer` — read-only semantic discovery и reconstruction в зарегистрированном CodeIndexer project с компактным evidence pack.
 - `scout` — read-only наблюдение локального runtime и операционного состояния.
 - `bounded-executor` — локальная реализация отдельного, уже ограниченного outcome; external/destructive actions всегда возвращаются как proposal главной сессии.
 - `test-runner` — custody-aware tests/builds/linters/smoke: запускать после возврата implementation edit window либо в изолированном root с явными output paths.
