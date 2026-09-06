@@ -1,49 +1,38 @@
 # Claude agent configuration
 
-## Repository family
+## Project family
 
-- [Codex Claude Orchestrator](https://github.com/coredo-eu/codex-claude-orchestrator) — local Codex-to-Claude worker transport, ownership policy, and lifecycle controls.
-- [Codex agent configuration](https://github.com/coredo-eu/codex-agent-config) — portable Codex guidance, native-agent roles, and configuration template.
-- [Claude agent configuration](https://github.com/coredo-eu/claude-agent-config) — portable standalone Claude guidance, agents, permissions, and CodeIndexer hook.
+- [codex-agent-config](https://github.com/coredo-eu/codex-agent-config) — Codex instructions and native specialist profiles.
+- [claude-agent-config](https://github.com/coredo-eu/claude-agent-config) — standalone Claude Code instructions and specialist agents.
+- [codex-claude-orchestrator](https://github.com/coredo-eu/codex-claude-orchestrator) — Codex plugin that delegates local tasks to Claude Code and returns results for Codex verification.
 
-This repository is a portable, public snapshot of a standalone Claude agent
-setup. It captures the main-session policy, seven specialized agent definitions,
-guarded permission choices, and a read-only CodeIndexer SessionStart hook. It
-does not contain Claude authentication, conversations, or runtime state.
+Together, these projects form the **COREDO agent tools family**: two
+configuration packages and one installable Codex plugin. Use each on its own
+or combine them. The orchestrator requires Claude Code, but does not require
+`claude-agent-config`; it supplies its own worker instructions and roles.
 
-## Current release
+## What it does
 
-`v0.3.0` aligns standalone Claude with the canonical seven-role semantic
-taxonomy. It separates direct source inspection from CodeIndexer-based semantic
-discovery while preserving the exact seven-field goal contract, single-writer
-custody, main-session completion authority, and the established role-specific
-model and effort routes.
+This package gives standalone Claude Code shared working instructions, seven
+specialist agents, example permissions, and an optional CodeIndexer session
+hook. It helps Claude delegate work, check results, and keep one editor in
+charge of each worktree.
 
-This version is independent of the Codex Claude Orchestrator release line.
-Codex PTY admission, busy-worker limits, and worker-stage guards remain in the
-orchestrator rather than being copied into standalone Claude configuration.
+The main Claude session manages the task and decides when it is complete.
+Specialists handle bounded assignments and return their results for review.
+They are used when they help, rather than as a required sequence of steps.
+External actions remain decisions for the main session. The full rules are in
+[`CLAUDE.md`](CLAUDE.md).
 
-## Operating model
+This package does not include credentials, conversations, or local runtime
+state. Codex-orchestrator controls such as PTY-worker admission and the
+busy-worker limit belong to the separate orchestrator plugin.
 
-- Standalone Claude is its own principal. Its main session owns the requested
-  outer goal, architectural decisions, integration, conflict resolution, and
-  the final completion verdict. A delegated agent owns one bounded stage; its
-  handoff is evidence, never completion of the outer goal.
-- Agents are optional bounded workers, not an obligatory pipeline. Delegation
-  is used when context isolation, parallel discovery, or independent review
-  materially improves the result.
-- A worktree has one active edit-capable stream. Parallel writers require
-  isolated worktrees and explicit custody transfer.
-- External, destructive, credential, service-control, commit, push, and deploy
-  actions remain decisions for the owning main session.
-- CodeIndexer provides discovery evidence, not authority. Indexed conclusions
-  are checked against source, configuration, schema, or observed runtime.
-- Roadmap/card tracking is used only for genuinely continued or coordinated
-  outcomes, not as ceremony for routine work.
+## What's included
 
-The complete policy is in [`CLAUDE.md`](CLAUDE.md).
-
-## Repository contents
+Current version: `v0.3.0` (see [`VERSION`](VERSION)). This version provides
+seven roles, including separate agents for direct source inspection and
+CodeIndexer discovery. Its versioning is independent of the orchestrator.
 
 | Path | Purpose |
 | --- | --- |
@@ -54,7 +43,7 @@ The complete policy is in [`CLAUDE.md`](CLAUDE.md).
 | [`hooks/codeindexer-session-facts.sh`](hooks/codeindexer-session-facts.sh) | Active read-only SessionStart hook for CodeIndexer readiness context. |
 | [`scripts/validate.py`](scripts/validate.py) | Deterministic goal-contract, model-route, and settings validation. |
 
-## Agent roles
+### Agent roles
 
 | Role | Model | Effort | Access | Intended use |
 | --- | --- | --- | --- | --- |
@@ -66,8 +55,7 @@ The complete policy is in [`CLAUDE.md`](CLAUDE.md).
 | `reviewer` | `claude-opus-5` | `medium` | read-only | Independent adversarial correctness and regression review. |
 | `security-reviewer` | `claude-opus-5` | `xhigh` | read-only | Security, privacy, credential, and authorization review. |
 
-The canonical semantic taxonomy maps to these standalone Claude names as
-follows:
+Choose the agent that matches the work:
 
 | Canonical semantic role | Standalone Claude agent | Selection boundary |
 | --- | --- | --- |
@@ -80,80 +68,60 @@ follows:
 | Security review | `security-reviewer` | Review materially implicated security or privacy concerns. |
 
 Each agent receives the bounded seven-field goal contract, chooses its own
-method, and returns concise evidence to the main session. Agent definitions
-never grant external-action authority.
+method, and returns concise evidence to the main session; agent definitions
+never grant external-action authority. Every independently owned delegation
+uses these headings in order: `Outcome`, `Done when`, `Boundaries`,
+`Authoritative context`, `Non-goals`, `Known evidence`, and `Required handoff`.
+Keep the values as short as the task allows.
 
-Every independently owned delegation preserves these exact headings in order:
-`Outcome`, `Done when`, `Boundaries`, `Authoritative context`, `Non-goals`,
-`Known evidence`, and `Required handoff`. Values may stay compact for a small
-read-only question, but routing metadata never replaces the goal contract.
+### Settings snapshot
 
-## Settings snapshot
-
-[`settings.example.json`](settings.example.json) records these current choices:
+[`settings.example.json`](settings.example.json) records these current
+choices:
 
 - no top-level `model`, `fallbackModel`, or `effortLevel` override: the main
   session inherits the model and effort selected by the user;
 - specialized agents override that inheritance intentionally with exact model
-  IDs: Haiku 4.5 handles direct/semantic discovery and routine verification, Sonnet 5 handles
-  implementation, and Opus 5 handles independent correctness and security
-  review;
-- supported agents also set role-specific effort: `high` for bounded execution,
-  `medium` for correctness review, and `xhigh` for security review. Haiku 4.5
-  does not support configurable effort, so its four inexpensive roles omit the
-  field; these defaults remain unchanged in `v0.3.0` pending a measured A/B evaluation;
+  IDs: Haiku 4.5 handles direct/semantic discovery and routine verification,
+  Sonnet 5 handles implementation, and Opus 5 handles independent correctness
+  and security review;
+- supported agents also set role-specific effort: `high` for bounded
+  execution, `medium` for correctness review, and `xhigh` for security
+  review; the four Haiku roles omit the effort field;
 - no `defaultMode`, `autoMode`, or `skipAutoPermissionPrompt`: automatic mode
   remains under the user's local Claude settings;
 - permission bypass disabled as a shared safety boundary;
-- allowlisted read-only CodeIndexer MCP discovery tools;
+- an allowlist of read-only CodeIndexer MCP tools: this only permits using an
+  MCP connection that is already configured elsewhere in your Claude
+  settings, it does not itself configure or start one;
 - explicit confirmation for commit, push, PR mutation, container/service
   control, `sudo`, process termination, and recursive deletion;
-- denial rules protecting local settings, Claude project histories, and common
-  credential-export patterns;
+- denial rules protecting local settings, Claude project histories, and
+  common credential-export patterns;
 - fullscreen dark TUI with the workflow usage warning suppressed;
 - one active SessionStart hook.
 
-The remaining settings fields may require adjustment for another Claude release
-channel.
-
-## CodeIndexer SessionStart hook
-
-The hook receives Claude's SessionStart JSON on stdin and:
-
-1. reads the session working directory;
-2. finds the longest matching registered project path;
-3. checks the loopback CodeIndexer readiness endpoint with a two-second timeout;
-4. injects one compact context line describing registry and index availability.
-
-It performs no writes, starts no service, reads no credentials, and exits
-silently when no registry or matching project exists. The registry defaults to
-`~/.config/codeindexer/projects.json`; set `CODEINDEXER_PROJECTS_REGISTRY` to
-use another location.
-
-Expected registry shape:
-
-```json
-{
-  "projections": [
-    {
-      "name": "example-project",
-      "path": "${HOME}/src/example-project"
-    }
-  ]
-}
-```
+The remaining settings fields may require adjustment for another Claude
+release channel.
 
 ## Installation
 
 Requirements:
 
-- Claude Code with support for `CLAUDE.md`, custom agents, hooks, and permission
-  rules;
+- Claude Code with support for `CLAUDE.md`, custom agents, hooks, and
+  permission rules;
 - Python 3 for repository validation;
-- `jq` and `curl` for the CodeIndexer hook;
-- CodeIndexer only when hook context or MCP discovery is wanted.
+- the hook script invokes `/usr/bin/jq`, `/bin/date`, and `/usr/bin/curl` by
+  absolute path — review
+  [`hooks/codeindexer-session-facts.sh`](hooks/codeindexer-session-facts.sh)
+  and adjust those paths first if your platform installs them elsewhere;
+- CodeIndexer only when hook context or MCP discovery is wanted. Installing
+  this package does not configure an MCP connection or start CodeIndexer for
+  you; any MCP server must be registered separately in your Claude settings.
 
-Clone and review the repository before installing it:
+Clone and review the repository before installing it. For an existing setup,
+compare and merge local changes first; the copy commands replace matching
+files:
 
 ```bash
 git clone https://github.com/coredo-eu/claude-agent-config.git
@@ -165,9 +133,45 @@ install -m 0644 agents/*.md ~/.claude/agents/
 install -m 0755 hooks/codeindexer-session-facts.sh ~/.claude/hooks/
 ```
 
-Replace `__HOME__` in `settings.example.json` with the absolute home path, then
-merge the result into `~/.claude/settings.json`. Do not overwrite unrelated
-local permissions, hooks, or plugin settings wholesale.
+Replace `__HOME__` in `settings.example.json` with the absolute home path,
+then merge the result into `~/.claude/settings.json`. Do not overwrite
+unrelated local permissions, hooks, or plugin settings wholesale. For updates,
+pull the checkout and review the diff before copying files again. Start a new
+Claude Code session after installation or an update.
+
+## Usage
+
+Start Claude Code normally and describe the task. The installed `CLAUDE.md`
+and agent definitions guide delegation and verification. For example:
+
+```text
+Investigate this bug, delegate a bounded fix if useful, and verify the result.
+```
+
+When the example hook is enabled, it runs on session start and:
+
+1. reads the session working directory;
+2. finds the longest matching registered project path;
+3. checks the loopback CodeIndexer readiness endpoint with a two-second
+   timeout;
+4. injects one compact context line describing registry and index
+   availability.
+
+It performs no writes, starts no service, reads no credentials, and exits
+silently when no registry or matching project exists. The registry defaults
+to `~/.config/codeindexer/projects.json`; set `CODEINDEXER_PROJECTS_REGISTRY`
+to use another location. Expected registry shape:
+
+```json
+{
+  "projections": [
+    {
+      "name": "example-project",
+      "path": "${HOME}/src/example-project"
+    }
+  ]
+}
+```
 
 ## Validation
 
@@ -182,14 +186,9 @@ The hook smoke command should exit successfully and produce no output when no
 matching registry entry exists. The contract validator prints
 `claude-agent-config validation: PASS` on success.
 
-## Deliberate exclusions
+## Further reading
 
-This repository does not contain credentials, licenses, local overrides,
-conversation or project histories, sessions, caches, downloads, file history,
-plugin caches, marketplace state, or absolute machine paths. Those remain owned
-by each local standalone Claude installation.
-
-It also does not define shared PTY-worker admission or a HOME-wide busy-worker
-limit. Those are Codex-orchestrator transport controls; copying them into this
-standalone configuration would neither coordinate Codex threads nor preserve
-their session ownership boundary.
+- [`CLAUDE.md`](CLAUDE.md): the complete delegation, ownership, evidence, and
+  tracking policy.
+- [codex-claude-orchestrator](https://github.com/coredo-eu/codex-claude-orchestrator): runs Claude workers under Codex and returns results for verification.
+- [codex-agent-config](https://github.com/coredo-eu/codex-agent-config): portable Codex instructions and native specialist profiles.
