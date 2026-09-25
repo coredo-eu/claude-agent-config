@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
-RELEASE_VERSION = "0.3.1"
+RELEASE_VERSION = "0.4.0"
 HEADINGS = [
     "Outcome",
     "Done when",
@@ -22,10 +22,10 @@ HEADINGS = [
 ROUTES: dict[str, tuple[str, str | None]] = {
     "bounded-executor.md": ("claude-sonnet-5", "high"),
     "source-explorer.md": ("claude-haiku-4-5-20251001", None),
-    "codeindexer-explorer.md": ("claude-haiku-4-5-20251001", None),
+    "codeindexer-explorer.md": ("claude-sonnet-5", "low"),
     "scout.md": ("claude-haiku-4-5-20251001", None),
     "test-runner.md": ("claude-haiku-4-5-20251001", None),
-    "reviewer.md": ("claude-opus-5-5", "medium"),
+    "reviewer.md": ("claude-opus-5-5", "high"),
     "security-reviewer.md": ("claude-opus-5-5", "xhigh"),
 }
 SEMVER = re.compile(r"(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)")

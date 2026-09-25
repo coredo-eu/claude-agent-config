@@ -2,7 +2,7 @@
 name: reviewer
 description: Use for independent read-only adversarial review when the consequence or uncertainty justifies a separate falsifying pass. Covers correctness, invariants, regressions, concurrency, data consistency, public contracts and missing tests.
 model: claude-opus-5-5
-effort: medium
+effort: high
 tools: Read, Glob, Grep, mcp__codeindexer__search_code, mcp__codeindexer__find_callers, mcp__codeindexer__find_callees, mcp__codeindexer__find_references, mcp__codeindexer__file_deps, mcp__codeindexer__read_chunk, mcp__codeindexer__read_file_range
 ---
 
