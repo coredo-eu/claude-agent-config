@@ -1,7 +1,7 @@
 ---
 name: security-reviewer
 description: Use for independent read-only security, privacy, credentials, authorization, AML and sanctions review when those concerns are materially implicated and adversarial evidence can change the verdict. It is for review, not remediation execution.
-model: claude-opus-5
+model: claude-opus-5-5
 effort: xhigh
 tools: Read, Glob, Grep, mcp__codeindexer__search_code, mcp__codeindexer__find_callers, mcp__codeindexer__find_callees, mcp__codeindexer__find_references, mcp__codeindexer__file_deps, mcp__codeindexer__read_chunk, mcp__codeindexer__read_file_range
 ---

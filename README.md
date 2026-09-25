@@ -30,7 +30,7 @@ busy-worker limit belong to the separate orchestrator plugin.
 
 ## What's included
 
-Current version: `v0.3.0` (see [`VERSION`](VERSION)). This version provides
+Current version: `v0.3.1` (see [`VERSION`](VERSION)). This version provides
 seven roles, including separate agents for direct source inspection and
 CodeIndexer discovery. Its versioning is independent of the orchestrator.
 
@@ -52,8 +52,8 @@ CodeIndexer discovery. Its versioning is independent of the orchestrator.
 | `codeindexer-explorer` | `claude-haiku-4-5-20251001` | not supported by Haiku | read-only | Semantic discovery, call/dependency reconstruction, and impact evidence. |
 | `scout` | `claude-haiku-4-5-20251001` | not supported by Haiku | read-only observation | Current local runtime, logs, health, queue, and service-state evidence. |
 | `test-runner` | `claude-haiku-4-5-20251001` | not supported by Haiku | verification outputs only | Tests, builds, linters, and smoke checks after edit custody returns. |
-| `reviewer` | `claude-opus-5` | `medium` | read-only | Independent adversarial correctness and regression review. |
-| `security-reviewer` | `claude-opus-5` | `xhigh` | read-only | Security, privacy, credential, and authorization review. |
+| `reviewer` | `claude-opus-5-5` | `medium` | read-only | Independent adversarial correctness and regression review. |
+| `security-reviewer` | `claude-opus-5-5` | `xhigh` | read-only | Security, privacy, credential, and authorization review. |
 
 Choose the agent that matches the work:
 
@@ -83,7 +83,7 @@ choices:
   session inherits the model and effort selected by the user;
 - specialized agents override that inheritance intentionally with exact model
   IDs: Haiku 4.5 handles direct/semantic discovery and routine verification,
-  Sonnet 5 handles implementation, and Opus 5 handles independent correctness
+  Sonnet 5 handles implementation, and Opus 5.5 handles independent correctness
   and security review;
 - supported agents also set role-specific effort: `high` for bounded
   execution, `medium` for correctness review, and `xhigh` for security
